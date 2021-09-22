@@ -13,9 +13,6 @@ inputs:
   registry-pass:
     description: "Docker registry password"
     required: true
-  acr-credentials:
-    description: "Azure Container Registry credentials"
-    required: true
   ops-repo-token:
     description: "PAT token for Operations repository"
     required: true

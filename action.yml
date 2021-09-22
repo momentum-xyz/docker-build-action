@@ -24,6 +24,7 @@ runs:
   steps:
     - id: setvars
       name: ${{github.event_name}}-${{github.event.ref }}
+      shell: bash
       run: |
         if [ "${{ github.event_name }}" = "schedule" ]; then
           VERSION=nightly
@@ -62,6 +63,7 @@ runs:
           -t ${IMAGE}:${VERSION}
         docker push ${IMAGE}:${{ github.sha }}
         docker push ${IMAGE}:${VERSION}
+      shell: bash
 
     - name: Dispatch to Operations
       uses: peter-evans/repository-dispatch@v1

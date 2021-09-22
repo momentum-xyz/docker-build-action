@@ -7,19 +7,18 @@ inputs:
     default: ${{ github.event.repository.name }}
   registry-server:
     required: true
-    default: ${{ secrets.REGISTRY_LOGIN_SERVER }}
   registry-user:
     descriptin: "Docker registry username"
     required: true
-    default: ${{ secrets.REGISTRY_USERNAME }}
   registry-pass:
     description: "Docker registry password"
     required: true
-    default: ${{ secrets.REGISTRY_PASSWORD }}
   acr-credentials:
     description: "Azure Container Registry credentials"
     required: true
-    default: ${{ secrets.REGISTRY_AZURE_CREDS }}
+  ops-repo-token:
+    description: "PAT token for Operations repository"
+    required: true
 runs:
   using: "composite"
   steps:
@@ -68,7 +67,7 @@ runs:
       uses: peter-evans/repository-dispatch@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        token: ${{ secrets.ODYSSEY_OPERATIONS }}
+        token: ${{ inputs.ops-repo-token }}
         repository: OdysseyMomentumExperience/Operations
         event-type: make-acc-pr
         client-payload: '{"name": "${{ inputs.image-name }}", "version": "${{ env.VERSION }}", "actor": "${{ github.event.actor.login }}"}'

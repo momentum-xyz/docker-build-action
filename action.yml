@@ -16,6 +16,10 @@ inputs:
   backfeed-repo-token:
     description: "Github token to passthrough docker build to access current repo"
     required: true
+outputs:
+  version:
+    description: "Version string generated for the image."
+    value: ${{ steps.setvars.outputs.version }}
 runs:
   using: "composite"
   steps:
@@ -36,6 +40,7 @@ runs:
           VERSION=pr-${{ github.event.number }}
         fi
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
+        echo "::set-output name=version::$(echo $VERSION)"
 
     # checkout the repo
     - name: "Checkout GitHub Action"

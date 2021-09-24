@@ -6,9 +6,10 @@ inputs:
     required: true
     default: ${{ github.event.repository.name }}
   registry-server:
+    description: "Docker registry location/URL"
     required: true
   registry-user:
-    descriptin: "Docker registry username"
+    description: "Docker registry username"
     required: true
   registry-pass:
     description: "Docker registry password"
@@ -18,7 +19,7 @@ inputs:
     required: true
   backfeed-repo-token:
     description: "Github token to passthrough docker build to access current repo"
-    required: true
+    required: false
 outputs:
   version:
     description: "Version string generated for the image."

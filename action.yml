@@ -14,9 +14,6 @@ inputs:
   registry-pass:
     description: "Docker registry password"
     required: true
-  ops-repo-token:
-    description: "Github token to access operations repo"
-    required: true
   backfeed-repo-token:
     description: "Github token to passthrough docker build to access current repo"
     required: false
@@ -63,31 +60,8 @@ runs:
     - name: "Build and push image"
       env:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
+      shell: bash
       run: |
         docker build --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} -f Dockerfile . -t ${IMAGE}:${{ github.sha }} -t ${IMAGE}:${VERSION}
         docker push ${IMAGE}:${{ github.sha }}
         docker push ${IMAGE}:${VERSION}
-      shell: bash
-
-    - uses: ChristopherHX/conditional@3fce4b7a3171a839b482306f9fd3aba0c2112a24
-      name: "Conditional dispatch"
-      with:
-        if: ${{startsWith(github.ref, 'refs/tags/')}}
-        step: |
-          name: Dispatch to Operations
-          uses: peter-evans/repository-dispatch@v1
-          with:
-            token: ${{ inputs.ops-repo-token }}
-            repository: OdysseyMomentumExperience/Operations
-            event-type: make-acc-pr
-            client-payload: '{"name": "${{ inputs.image-name }}", "version": "${{ steps.setvars.outputs.version }}", "actor": "${{ github.event.actor.login }}"}'
-
-    - uses: ChristopherHX/conditional@3fce4b7a3171a839b482306f9fd3aba0c2112a24
-      name: "!Conditional"
-      with:
-        if: ${{startsWith(github.ref, 'refs/tags/') != true}}
-        step: |
-          shell: bash
-          run: |
-            echo "NOT dispatching to operations:"
-            echo '{"name": "${{ inputs.image-name }}", "version": "${{ steps.setvars.outputs.version }}", "actor": "${{ github.event.actor.login }}"}'

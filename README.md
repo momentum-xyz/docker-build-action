@@ -17,7 +17,6 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
           registry-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           registry-user: ${{ secrets.REGISTRY_USERNAME }}
           registry-pass: ${{ secrets.REGISTRY_PASSWORD }}
-          ops-repo-token: ${{ secrets.ODYSSEY_OPERATIONS }}
 ```
 
 ### Inputs
@@ -27,10 +26,9 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
 | `registry-server` | (**required**) Docker registry location/URL |  |
 | `registry-user` | (**required**) Docker registry username for authentication |  |
 | `registry-pass` | (**required**) Docker registry password for authentication |  |
-| `ops-repo-token` | (**required**) Github access token for the Operations repository |  |
 | `backfeed-repo-token` | Github access token for use inside the docker build |  |
 
 ### Outputs
 | Name | Description |
 | --- | --- |
-| `version` | The generated version string, e.g. 'develop' or 'v1.2.3' |
+| `version` | The generated version string, e.g. 'v1.2.3' or 'latest' |

@@ -17,6 +17,7 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
           registry-server: ${{ secrets.REGISTRY_LOGIN_SERVER }}
           registry-user: ${{ secrets.REGISTRY_USERNAME }}
           registry-pass: ${{ secrets.REGISTRY_PASSWORD }}
+          npm-token: ${{ secrets.NPM_TOKEN }}
 ```
 
 ### Inputs
@@ -26,7 +27,7 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
 | `registry-server` | (**required**) Docker registry location/URL |  |
 | `registry-user` | (**required**) Docker registry username for authentication |  |
 | `registry-pass` | (**required**) Docker registry password for authentication |  |
-| `backfeed-repo-token` | Github access token for use inside the docker build |  |
+| `npm-token` | Github access token (PAT) to access private npm packages |  |
 
 ### Outputs
 | Name | Description |

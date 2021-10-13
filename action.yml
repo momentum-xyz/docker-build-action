@@ -17,6 +17,9 @@ inputs:
   npm-token:
     required: false
     description: "Access token for private (npm) packages."
+  backfeed-repo-token:
+    required: false
+    description: "Github token to passthrough docker build to access current repo"
 outputs:
   version:
     description: "Version string generated for the image."
@@ -71,6 +74,7 @@ runs:
       shell: bash
       run: |
         docker build \
+          --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
           --secret id=npm,src=$NPM_CONFIG_USERCONFIG \
           -t ${IMAGE}:${{ github.sha }} -t ${IMAGE}:${VERSION} \
           -f Dockerfile .

@@ -61,12 +61,12 @@ runs:
         password: ${{ inputs.registry-pass }}
 
     - name: "Github packages authorization"
-      uses: actions/setup-node@v2
-      with:
-        registry-url: 'https://npm.pkg.github.com'
-        scope: '@OdysseyMomentumExperience'
-        token: ${{ inputs.npm-token }}
-
+      shell: bash
+      env:
+        NPM_TOKEN: ${{ inputs.npm-token }}
+      run: |
+        echo "@OdysseyMomentumExperience:registry=https://npm.pkg.github.com/" > $HOME/.npmrc
+        echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> $HOME/.npmrc
     - name: "Build and push image"
       env:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
@@ -75,7 +75,7 @@ runs:
       run: |
         docker build \
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
-          --secret id=npm,src=$NPM_CONFIG_USERCONFIG \
+          --secret id=npm,src=$HOME/.npmrc \
           -t ${IMAGE}:${{ github.sha }} -t ${IMAGE}:${VERSION} \
           -f Dockerfile .
         docker push ${IMAGE}:${{ github.sha }}

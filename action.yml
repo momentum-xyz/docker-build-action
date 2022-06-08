@@ -70,10 +70,11 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
+        GIT_DESC=$(git describe || "${{github.sha}}")
         docker build \
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
           --secret id=npm,src=$HOME/.npmrc \
-          -t ${IMAGE}:${{ github.sha }} -t ${IMAGE}:${VERSION} \
+          -t ${IMAGE}:${GIT_DESC} -t ${IMAGE}:${VERSION} \
           -f Dockerfile .
-        docker push ${IMAGE}:${{ github.sha }}
+        docker push ${IMAGE}:${GIT_DESC}
         docker push ${IMAGE}:${VERSION}

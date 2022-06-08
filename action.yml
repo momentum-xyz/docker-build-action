@@ -35,6 +35,8 @@ runs:
           VERSION=nightly
         elif [[ $GITHUB_REF == refs/tags/* ]]; then
           VERSION=${GITHUB_REF#refs/tags/}
+        elif [[ $GITHUB_REF == refs/heads/release/* ]]; then
+          VERSION="release"
         elif [[ $GITHUB_REF == refs/heads/* ]]; then
           VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
         elif [[ $GITHUB_REF == refs/pull/* ]]; then
@@ -70,10 +72,11 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
+        GIT_DESC=$(git describe || "${{github.sha}}")
         docker build \
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
           --secret id=npm,src=$HOME/.npmrc \
-          -t ${IMAGE}:${{ github.sha }} -t ${IMAGE}:${VERSION} \
+          -t ${IMAGE}:${GIT_DESC} -t ${IMAGE}:${VERSION} \
           -f Dockerfile .
-        docker push ${IMAGE}:${{ github.sha }}
+        docker push ${IMAGE}:${GIT_DESC}
         docker push ${IMAGE}:${VERSION}

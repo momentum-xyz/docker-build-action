@@ -72,7 +72,7 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
-        GIT_DESC=$(git describe || "${{github.sha}}")
+        GIT_DESC=$(git describe || echo "${{github.sha}}")
         docker build \
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
           --secret id=npm,src=$HOME/.npmrc \

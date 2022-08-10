@@ -52,13 +52,6 @@ runs:
         submodules: true
         lfs: true
 
-    - name: "Docker login"
-      uses: azure/docker-login@v1
-      with:
-        login-server: ${{ inputs.registry-server }}
-        username: ${{ inputs.registry-user }}
-        password: ${{ inputs.registry-pass }}
-
     - name: "Github packages authorization"
       shell: bash
       env:
@@ -66,9 +59,11 @@ runs:
       run: |
         echo "@OdysseyMomentumExperience:registry=https://npm.pkg.github.com/" > $HOME/.npmrc
         echo "//npm.pkg.github.com/:_authToken=${NPM_TOKEN}" >> $HOME/.npmrc
-    - name: "Build and push image"
+
+    - name: "Build image"
       env:
-        IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
+        AZURE_IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
+        GITHUB_IMAGE: ghcr.io/${{ inputs.image-name }}
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
@@ -76,7 +71,38 @@ runs:
         docker build \
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
           --secret id=npm,src=$HOME/.npmrc \
-          -t ${IMAGE}:${GIT_DESC} -t ${IMAGE}:${VERSION} \
-          -f Dockerfile .
+          --tag ${AZURE_IMAGE}:${GIT_DESC} --tag ${AZURE_IMAGE}:${VERSION} \
+          --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION} \
+          --file Dockerfile .
+
+    - name: "Azure Docker login"
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ inputs.registry-server }}
+        username: ${{ inputs.registry-user }}
+        password: ${{ inputs.registry-pass }}
+
+    - name: "Push image to Azure"
+      env:
+        IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
+      shell: bash
+      run: |
+        GIT_DESC=$(git describe || echo "${{github.sha}}")
         docker push ${IMAGE}:${GIT_DESC}
         docker push ${IMAGE}:${VERSION}
+
+    - name: "Github Docker login"
+      uses: docker/login-action@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ inputs.backfeed-repo-token }} # ${{ secrets.GITHUB_TOKEN }}
+
+    - name: "Push image to Github"
+      env:
+        IMAGE: ghcr.io/${{ inputs.image-name }}
+      shell: bash
+      run: |
+        GIT_DESC=$(git describe || echo "${{github.sha}}")
+        docker push ghcr.io/${IMAGE}:${GIT_DESC}
+        docker push ghcr.io/${IMAGE}:${VERSION}

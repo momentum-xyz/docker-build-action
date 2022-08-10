@@ -20,6 +20,9 @@ inputs:
   backfeed-repo-token:
     required: false
     description: "Github token to passthrough docker build to access current repo"
+  github-token:
+    required: false
+    description: "Github token. Used tyo login to ghcr.io"
 outputs:
   version:
     description: "Version string generated for the image."
@@ -63,7 +66,7 @@ runs:
     - name: "Build image"
       env:
         AZURE_IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
-        GITHUB_IMAGE: ghcr.io/${{ inputs.image-name }}
+        GITHUB_IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
@@ -96,13 +99,13 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.github-token }}
 
     - name: "Push image to Github"
       env:
-        IMAGE: ghcr.io/${{ inputs.image-name }}
+        IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
       shell: bash
       run: |
         GIT_DESC=$(git describe || echo "${{github.sha}}")
-        docker push ghcr.io/${IMAGE}:${GIT_DESC}
-        docker push ghcr.io/${IMAGE}:${VERSION}
+        docker push ${IMAGE}:${GIT_DESC}
+        docker push ${IMAGE}:${VERSION}

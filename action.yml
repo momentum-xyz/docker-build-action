@@ -103,7 +103,7 @@ runs:
 
     - name: "Push image to Github"
       env:
-        IMAGE: ghcr.io/${{ inputs.image-name }}
+        IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
       shell: bash
       run: |
         GIT_DESC=$(git describe || echo "${{github.sha}}")

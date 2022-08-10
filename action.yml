@@ -20,6 +20,9 @@ inputs:
   backfeed-repo-token:
     required: false
     description: "Github token to passthrough docker build to access current repo"
+  github-token:
+    required: false
+    description: "Github token. Used tyo login to ghcr.io"
 outputs:
   version:
     description: "Version string generated for the image."
@@ -96,7 +99,7 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.github-token }}
 
     - name: "Push image to Github"
       env:

@@ -107,5 +107,5 @@ runs:
       shell: bash
       run: |
         GIT_DESC=$(git describe || echo "${{github.sha}}")
-        docker push ghcr.io/${IMAGE}:${GIT_DESC}
-        docker push ghcr.io/${IMAGE}:${VERSION}
+        docker push ${IMAGE}:${GIT_DESC}
+        docker push ${IMAGE}:${VERSION}

@@ -28,6 +28,7 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
 | `registry-user` | (**required**) Docker registry username for authentication |  |
 | `registry-pass` | (**required**) Docker registry password for authentication |  |
 | `npm-token` | Github access token (PAT) to access private npm packages |  |
+| `multistage-target` | Docker build target for multistage builds.  |  |
 
 ### Outputs
 | Name | Description |

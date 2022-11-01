@@ -23,6 +23,9 @@ inputs:
   github-token:
     required: false
     description: "Github token. Used tyo login to ghcr.io"
+  multistage-target:
+    required: false
+    description: "Docker build target for multistage builds."
 outputs:
   version:
     description: "Version string generated for the image."
@@ -67,16 +70,20 @@ runs:
       env:
         AZURE_IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
         GITHUB_IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
+        DOCKER_BUILD_TARGET: ${{ inputs.multistage-target }}
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
         GIT_DESC=$(git describe || echo "${{github.sha}}")
-        docker build \
-          --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }} \
-          --secret id=npm,src=$HOME/.npmrc \
-          --tag ${AZURE_IMAGE}:${GIT_DESC} --tag ${AZURE_IMAGE}:${VERSION} \
-          --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION} \
-          --file Dockerfile .
+        args=(
+          --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }}
+          --secret id=npm,src=$HOME/.npmrc
+          --tag ${AZURE_IMAGE}:${GIT_DESC} --tag ${AZURE_IMAGE}:${VERSION}
+          --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION}
+          --file Dockerfile
+        )
+        [ -n "${DOCKER_BUILD_TARGET}" ] && args+=( " --target=$DOCKER_BUILD_TARGET" )
+        docker build "${args[@]}" .
 
     - name: "Azure Docker login"
       uses: azure/docker-login@v1

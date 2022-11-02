@@ -26,6 +26,9 @@ inputs:
   multistage-target:
     required: false
     description: "Docker build target for multistage builds."
+  extra-args:
+    required: false
+    description: "Command line arguments added to the docker build call."
 outputs:
   version:
     description: "Version string generated for the image."
@@ -71,6 +74,7 @@ runs:
         AZURE_IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
         GITHUB_IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
         DOCKER_BUILD_TARGET: ${{ inputs.multistage-target }}
+        DOCKER_EXTRA_ARGS: ${{ inputs.extra-args }}
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
@@ -84,6 +88,7 @@ runs:
           --file Dockerfile
         )
         [ -n "${DOCKER_BUILD_TARGET}" ] && args+=( --target=$DOCKER_BUILD_TARGET )
+        [ -n "${DOCKER_EXTRA_ARGS}" ] && args+=( $DOCKER_EXTRA_ARGS )
         docker build "${args[@]}" .
 
     - name: "Azure Docker login"

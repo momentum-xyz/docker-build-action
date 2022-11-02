@@ -82,7 +82,7 @@ runs:
           --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION}
           --file Dockerfile
         )
-        [ -n "${DOCKER_BUILD_TARGET}" ] && args+=( " --target=$DOCKER_BUILD_TARGET" )
+        [ -n "${DOCKER_BUILD_TARGET}" ] && args+=( --target=$DOCKER_BUILD_TARGET )
         docker build "${args[@]}" .
 
     - name: "Azure Docker login"

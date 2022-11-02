@@ -52,7 +52,7 @@ runs:
           VERSION=pr-${{ github.event.number }}
         fi
         echo "VERSION=${VERSION}" >> $GITHUB_ENV
-        echo "version=${VERSION}" >> $GITHUB_OUPUT
+        echo "version=${VERSION}" >> $GITHUB_OUTPUT
 
     # checkout the repo
     - name: "Checkout GitHub Action"

@@ -92,7 +92,7 @@ runs:
         docker build "${args[@]}" .
 
     - name: "Azure Docker login"
-      uses: azure/docker-login@v1
+      uses: azure/docker-login@v1.0.1
       with:
         login-server: ${{ inputs.registry-server }}
         username: ${{ inputs.registry-user }}

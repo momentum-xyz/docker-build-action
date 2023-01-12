@@ -82,7 +82,7 @@ runs:
         GIT_DESC=$(git describe || echo "${{github.sha}}")
         args=(
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }}
-          --build-arg BUILD_VERSION=${VERSION}
+          --build-arg BUILD_VERSION=${GIT_DESC}
           --secret id=npm,src=$HOME/.npmrc
           --tag ${AZURE_IMAGE}:${GIT_DESC} --tag ${AZURE_IMAGE}:${VERSION}
           --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION}

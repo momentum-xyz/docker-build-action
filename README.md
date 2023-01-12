@@ -5,7 +5,6 @@ Shared build steps for Odyssey projects to build a docker image from a github re
 This generates a version based on git branch or tag.
 Builds a docker image, using the repositories Dockerfile.
 Pushes and tags the image, with git commit hash and the generated version.
-If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operations repository to prepare a release to acc environment.
 
 
 ## Usage
@@ -19,6 +18,8 @@ If it's a tagged version (vX.Y.Z), an action event is dispatched to the Operatio
           registry-pass: ${{ secrets.REGISTRY_PASSWORD }}
           npm-token: ${{ secrets.NPM_TOKEN }}
 ```
+(replace v1 with the appropriate version tag or commit hash)
+
 
 ### Inputs
 | Name | Description | Default |

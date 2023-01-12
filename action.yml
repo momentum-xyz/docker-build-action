@@ -60,6 +60,7 @@ runs:
       with:
         submodules: true
         lfs: true
+        fetch-depth: 0
 
     - name: "Github packages authorization"
       shell: bash

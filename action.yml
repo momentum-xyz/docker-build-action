@@ -79,7 +79,7 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
-        GIT_DESC=$(git describe || echo "${{github.sha}}")
+        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
         SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
         args=(
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }}

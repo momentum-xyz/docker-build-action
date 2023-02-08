@@ -62,6 +62,15 @@ runs:
         lfs: true
         fetch-depth: 0
 
+    - id: build_meta
+      name: "Set git build metadata"
+      shell: bash
+      run: |
+        BUILD_VERSION=$(git describe --tags || echo "${{github.sha}}")
+        SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
+        echo "version=${BUILD_VERSION}" >> $GITHUB_OUTPUT
+        echo "source_date_epoch=${SOURCE_DATE_EPOCH}" >> $GITHUB_OUTPUT
+
     - name: "Github packages authorization"
       shell: bash
       env:
@@ -79,15 +88,14 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
-        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
         SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
         args=(
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }}
-          --build-arg BUILD_VERSION=${GIT_DESC}
-          --build-arg SOURCE_DATE_EPOCH=${SOURCE_DATE_EPOCH}
+          --build-arg BUILD_VERSION=${{ steps.build_meta.outputs.version }}
+          --build-arg SOURCE_DATE_EPOCH=${{ steps.build_meta.outputs.source_date_epoch }}
           --secret id=npm,src=$HOME/.npmrc
-          --tag ${AZURE_IMAGE}:${GIT_DESC} --tag ${AZURE_IMAGE}:${VERSION}
-          --tag ${GITHUB_IMAGE}:${GIT_DESC} --tag ${GITHUB_IMAGE}:${VERSION}
+          --tag ${AZURE_IMAGE}:${{ steps.build_meta.outputs.version }} --tag ${AZURE_IMAGE}:${VERSION}
+          --tag ${GITHUB_IMAGE}:${{ steps.build_meta.outputs.version }} --tag ${GITHUB_IMAGE}:${VERSION}
           --file Dockerfile
         )
         [ -n "${DOCKER_BUILD_TARGET}" ] && args+=( --target=$DOCKER_BUILD_TARGET )
@@ -106,8 +114,7 @@ runs:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
       shell: bash
       run: |
-        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
-        docker push ${IMAGE}:${GIT_DESC}
+        docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}
 
     - name: "Github Docker login"
@@ -122,6 +129,5 @@ runs:
         IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
       shell: bash
       run: |
-        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
-        docker push ${IMAGE}:${GIT_DESC}
+        docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}

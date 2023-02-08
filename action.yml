@@ -88,7 +88,6 @@ runs:
         DOCKER_BUILDKIT: 1
       shell: bash
       run: |
-        SOURCE_DATE_EPOCH=$(git log -1 --pretty=%ct)
         args=(
           --build-arg GITHUB_TOKEN=${{ inputs.backfeed-repo-token }}
           --build-arg BUILD_VERSION=${{ steps.build_meta.outputs.version }}

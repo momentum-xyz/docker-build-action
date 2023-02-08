@@ -106,7 +106,7 @@ runs:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
       shell: bash
       run: |
-        GIT_DESC=$(git describe || echo "${{github.sha}}")
+        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
         docker push ${IMAGE}:${GIT_DESC}
         docker push ${IMAGE}:${VERSION}
 
@@ -122,6 +122,6 @@ runs:
         IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
       shell: bash
       run: |
-        GIT_DESC=$(git describe || echo "${{github.sha}}")
+        GIT_DESC=$(git describe --tags || echo "${{github.sha}}")
         docker push ${IMAGE}:${GIT_DESC}
         docker push ${IMAGE}:${VERSION}

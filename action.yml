@@ -32,7 +32,7 @@ inputs:
   git-lfs:
     description: "Enable Git-LFS"
     required: false
-    default: true
+    default: "true"
 outputs:
   version:
     description: "Version string generated for the image."
@@ -65,7 +65,9 @@ runs:
         submodules: true
         lfs: ${{ inputs.git-lfs }}
         fetch-depth: 0
-
+    - name: "git lfs"  # Workaround actions/checkout#270
+      if: inputs.git-lfs == 'true'
+      run: git lfs pull
     - id: build_meta
       name: "Set git build metadata"
       shell: bash

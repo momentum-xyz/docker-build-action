@@ -67,6 +67,7 @@ runs:
         fetch-depth: 0
     - name: "git lfs"  # Workaround actions/checkout#270
       if: inputs.git-lfs == 'true'
+      shell: bash
       run: git lfs pull
     - id: build_meta
       name: "Set git build metadata"

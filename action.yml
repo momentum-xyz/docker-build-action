@@ -116,12 +116,14 @@ runs:
         password: ${{ inputs.registry-pass }}
 
     - name: "Push image to Azure"
+      id: push_aks
       env:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
       shell: bash
       run: |
         docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}
+        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }}\n${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
 
     - name: "Github Docker login"
       uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc  # v2.2.0
@@ -131,9 +133,23 @@ runs:
         password: ${{ inputs.github-token }}
 
     - name: "Push image to Github"
+      id: push_gh
       env:
         IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
       shell: bash
       run: |
         docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}
+        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }}\n${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
+
+    - name: Build summary
+      run: |
+        SUMMARY=$'# Build Summary\n\nVersion: ${{ steps.build_meta.outputs.version }}\n'
+        echo '### Build info ' >> $GITHUB_STEP_SUMMARY
+        echo "Version: ${VERSION}" >> $GITHUB_STEP_SUMMARY
+        echo "Build version: ${{ steps.build_meta.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "Build epoch: ${{ steps.build_meta.outputs.source_date_epoch }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "AKS: ${{ steps.push_aks.outputs.images }}" >> $GITHUB_STEP_SUMMARY
+        echo "GH: ${{ steps.push_gh.outputs.images }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY

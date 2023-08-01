@@ -143,6 +143,7 @@ runs:
         echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }}\n${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
 
     - name: Build summary
+      shell: bash
       run: |
         SUMMARY=$'# Build Summary\n\nVersion: ${{ steps.build_meta.outputs.version }}\n'
         echo '### Build info ' >> $GITHUB_STEP_SUMMARY

@@ -123,7 +123,7 @@ runs:
       run: |
         docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}
-        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }}\n${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
+        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }} ${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
 
     - name: "Github Docker login"
       uses: docker/login-action@465a07811f14bebb1938fbed4728c6a1ff8901fc  # v2.2.0
@@ -140,7 +140,7 @@ runs:
       run: |
         docker push ${IMAGE}:${{ steps.build_meta.outputs.version }}
         docker push ${IMAGE}:${VERSION}
-        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }}\n${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
+        echo "images=${IMAGE}:${{ steps.build_meta.outputs.version }} ${IMAGE}:${VERSION}" >> $GITHUB_OUTPUT
 
     - name: Build summary
       shell: bash

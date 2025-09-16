@@ -7,13 +7,13 @@ inputs:
     default: ${{ github.event.repository.name }}
   registry-server:
     description: "Docker registry location/URL"
-    required: true
+    required: false
   registry-user:
     description: "Docker registry username"
-    required: true
+    required: false
   registry-pass:
     description: "Docker registry password"
-    required: true
+    required: false
   npm-token:
     required: false
     description: "Access token for private (npm) packages."
@@ -109,6 +109,7 @@ runs:
         docker build "${args[@]}" .
 
     - name: "Azure Docker login"
+      if: contains(inputs.registry-server, 'azurecr')
       uses: azure/docker-login@83efeb77770c98b620c73055fbb59b2847e17dc0  # v1.0.1
       with:
         login-server: ${{ inputs.registry-server }}
@@ -117,6 +118,7 @@ runs:
 
     - name: "Push image to Azure"
       id: push_aks
+      if: contains(inputs.registry-server, 'azurecr')
       env:
         IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
       shell: bash

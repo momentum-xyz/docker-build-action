@@ -88,7 +88,6 @@ runs:
 
     - name: "Build image"
       env:
-        AZURE_IMAGE: ${{ inputs.registry-server }}/${{ inputs.image-name }}
         GITHUB_IMAGE: ghcr.io/momentum-xyz/${{ inputs.image-name }}
         DOCKER_BUILD_TARGET: ${{ inputs.multistage-target }}
         DOCKER_EXTRA_ARGS: ${{ inputs.extra-args }}
@@ -100,7 +99,6 @@ runs:
           --build-arg BUILD_VERSION=${{ steps.build_meta.outputs.version }}
           --build-arg SOURCE_DATE_EPOCH=${{ steps.build_meta.outputs.source_date_epoch }}
           --secret id=npm,src=$HOME/.npmrc
-          --tag ${AZURE_IMAGE}:${{ steps.build_meta.outputs.version }} --tag ${AZURE_IMAGE}:${VERSION}
           --tag ${GITHUB_IMAGE}:${{ steps.build_meta.outputs.version }} --tag ${GITHUB_IMAGE}:${VERSION}
           --file Dockerfile
         )
